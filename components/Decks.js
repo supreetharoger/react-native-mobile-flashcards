@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, AsyncStorage } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, AsyncStorage, Animated } from 'react-native'
 import { getDecks } from '../utils/api'
 import { connect } from 'react-redux'
 import { handleDecks } from '../actions/shared'
@@ -8,56 +8,66 @@ import { AppLoading } from 'expo'
 import { Header } from 'react-native-elements'
 import AddCards from './AddCards'
 import DeckListView from './DeckListView'
+import { MaterialCommunityIcons }  from '@expo/vector-icons'
 
 
 class Decks extends Component {
 
     state = {
-        ready: false
+        ready: false,
+        animatedValue: new Animated.Value(1)
     }
 
     async componentDidMount() {
-        const a = { sup: {title: 'merge', questions: []}}
-        const b = { supi: {title: 'erge', questions: []}}
         await this.props.dispatch(handleDecks())
         this.setState(() => ({ready: true}))
     
     }
     onPress = (deck, navigation) => {
-        console.log("DECLL")
+        Animated.timing(this.state.animatedValue, {
+            toValue: 0,
+            duration: 5000
+        }).start()
         navigation.navigate('DeckListView', { deckId: deck})
+        this.setState({
+            animatedValue: new Animated.Value(1)
+        })
     }
 
     renderItem(deck, navigation) {
-        console.log("DECK", deck)
-        return (             
-            <TouchableOpacity style={styles.row} key={deck.item[1].title} onPress={this.onPress.bind(this, deck.item[1].title, navigation)}>       
+        const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity)
+        return (            
+            <AnimatedTouchable  style={[styles.row,{opacity: this.state.animatedValue}]} key={deck.item[1].title}        
+                    onPress={this.onPress.bind(this, deck.item[1].title, navigation)}>       
                 <View>
-                    <Text style={styles.deckText}>{deck.item[1].title}</Text>
-                    <Text style={styles.deckTextCards}>{deck.item[1].questions && deck.item[1].questions.length} cards</Text>
+                    <Text style={styles.deckText}>
+                    <MaterialCommunityIcons name="cards" size={30} color="black" style={styles.deckImage} />
+                    {deck.item[1].title}</Text>
+                    <Text style={styles.deckTextCards}>
+                        {deck.item[1].questions && deck.item[1].questions.length} 
+                        {deck.item[1].questions.length === 1 ? ' card' : ' cards'}
+                    </Text>
                 </View>
-            </TouchableOpacity>
+            </AnimatedTouchable>
             )
     }
     render() {
-        const { decks } = this.props
-        const { navigation } = this.props
+        const { decks, navigation } = this.props
         const { ready} = this.state
-//        const results = Object.entries(decks)
- //       console.log("POLLLL", results)
         if (ready === false) {
             return <ActivityIndicator />
         }
         if(ready === true) {
-            console.log("JII", decks)
         const results = Object.entries(decks)
-        console.log("RG", results)
 
         return (
                 <View style={styles.header}>
                     <Header centerComponent={{text: 'DECKS', color: '#fff'}} containerStyle={{backgroundColor: 'orange'}}/>
                     <View style={styles.container}> 
-                        <FlatList data={results} renderItem={(item) => this.renderItem(item, navigation)} />
+                        <FlatList data={results} renderItem={(item) => this.renderItem(item, navigation)} 
+                        keyExtractor={(item,index) => {
+                            return item[0]
+                        }}/>
                     </View>                
                 </View>
             )}
@@ -79,26 +89,30 @@ const styles = StyleSheet.create({
         flex:1, 
         alignItems: 'center',
         justifyContent: 'center',
-        margin: 30,
+        margin: 20,
         backgroundColor: '#eee',
-        borderWidth: 1,
-        borderColor: 'gray',
+        borderWidth: 4,
+        borderColor: 'rgba(232, 123, 27, 0.5)',
         borderRadius: 7
     },
     deckText: {
         fontSize: 40,
-        alignItems: 'center'
+        alignItems: 'center',
+        margin: 20
     },
     deckTextCards: {
         color: 'gray',
         fontSize: 20,
-        padding: 10
+        margin: 20,
+        paddingLeft: 30
+    },
+    deckImage: {
+        color: 'orange'
     }
 
 })
 
 function mapStateToProps({decks}, props) {
-    console.log("PLOP", props)
     return {
         decks,
         navigation: props.navigation

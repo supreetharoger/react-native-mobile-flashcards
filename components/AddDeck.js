@@ -16,23 +16,44 @@ function SubmitBtn({onPress}) {
 
 class AddDeck extends Component {
     state = {
-        title: ''
+        title: '',
+        errorMessage: ''
     }
 
     handleChange = (text) => {
-        console.log(text)
         this.setState({
-            title: text
+            title: text,
+            errorMessage: ''
         })
     }
 
-    submit = () => {
+    checkDeckExists = (decks, deckId) => {
+        const keys = Object.keys(decks)
+        return keys.some(value => value.toLowerCase() == deckId.toLowerCase())
+    }
+
+    submit = (decks, navigation) => {
+        const { title } = this.state
+        if(title === '' || title === undefined) {
+            this.setState({
+                errorMessage: 'Please enter deck title'
+            })
+            return 
+        }
+        if(this.checkDeckExists(decks, title)) {
+            this.setState({
+                errorMessage: 'Deck name already exists'
+            })
+            return    
+        }
+
         const deck = {
             title: this.state.title,
             questions: []
         }
         this.props.dispatch(addDeck(deck))
         saveDeckTitle(this.state.title)
+        navigation.navigate('Decks')
         this.setState({
             title: ''
         })
@@ -40,7 +61,8 @@ class AddDeck extends Component {
     }
 
     render() {
-        const { title } = this.state
+        const { decks, navigation } = this.props
+        const { title, errorMessage } = this.state
         return (
                 <View style={styles.header}>
                 <Header centerComponent={{text: 'ADD DECK', color: '#fff'}} containerStyle={{backgroundColor: 'orange'}}/>
@@ -54,11 +76,15 @@ class AddDeck extends Component {
                             <TextInput style={styles.textInput} 
                             placeholder="Deck Title"
                             onChangeText={text => this.handleChange(text)}/>
+
+                    </View>
+                    <View style={{flexDirection: 'column'}}>
+                        <Text style={styles.errorMessageText}>{errorMessage}</Text>
                     </View>
                     </TouchableOpacity>
                     
                     <View style={styles.bottom}>
-                    <SubmitBtn onPress={this.submit} />
+                    <SubmitBtn onPress={this.submit.bind(this, decks, navigation)} />
                     </View>
                </View>
                </View>
@@ -72,15 +98,12 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-//        justifyContent: 'space-between',
         backgroundColor: 'white',
         padding: 20
     },
     row: {
         flexDirection: 'row',
         flex:1, 
- //       alignItems: 'center',
-   //     justifyContent: 'center',
         margin: 30
     },
     bottom: {
@@ -92,8 +115,6 @@ const styles = StyleSheet.create({
     titleText: {
         color: 'black',
         fontSize: 40,
-    //    alignItems: 'center',
-      //  justifyContent: 'center'
     },
     buttonText: {
         padding: 10,
@@ -127,7 +148,24 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    errorMessage: {
+        flex: 1
+    },
+    errorMessageText: {
+        textAlign: 'center',
+        fontSize: 20,
+        color: 'red'
     }
+
 })
 
-export default connect()(AddDeck)
+function mapStateToProps({decks}, props) {
+    return {
+        decks,
+        navigation: props.navigation
+    }
+}
+
+
+export default connect(mapStateToProps)(AddDeck)

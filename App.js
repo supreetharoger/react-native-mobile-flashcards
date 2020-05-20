@@ -12,17 +12,22 @@ import AddDeck from './components/AddDeck'
 import Decks from './components/Decks'
 import AddCards from './components/AddCards'
 import DeckListView from './components/DeckListView'
+import QuizView from './components/QuizView'
+import QuizResults from './components/QuizResults'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { getDecks, initialDecks } from './utils/api'
 import { handleDecks } from './actions/shared'
-
+import { setLocalNotification } from './utils/helpers'
 
 class App extends Component {
+    componentDidMount() {
+        setLocalNotification()
+    }
+    
     render() {
         const Tab = createBottomTabNavigator()
         const Stack = createStackNavigator()
         const store = createStore(reducer, middleware)
-        console.log("MAMAM", store.getState())
 
         const TabNav = () => (
          <Tab.Navigator
@@ -51,6 +56,8 @@ class App extends Component {
                     <Stack.Screen name="Home" component={TabNav} options={{headerShown:false}}/>
                     <Stack.Screen name="AddCards" component={AddCards}/>
                     <Stack.Screen name="DeckListView" component={DeckListView}/>
+                    <Stack.Screen name="QuizView" component={QuizView}/>
+                   <Stack.Screen name="QuizResults" component={QuizResults}/>
                 </Stack.Navigator>
                 )
         return (
