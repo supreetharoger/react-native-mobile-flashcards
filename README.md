@@ -10,4 +10,5 @@ This project was tested in web and ios device using expo:
 * For web - expo start
 * For ios device - Install the expo app through App Store
 
-
+## App Details
+[![IMAGE ALT MY READS](http://img.youtube.com/vi/2ueuQAW5BH8/0.jpg)](http://www.youtube.com/watch?v=2ueuQAW5BH8)

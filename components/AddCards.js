@@ -77,7 +77,7 @@ class AddCards extends Component {
                         </View>  
                          <View style={styles.row}>
                             <TextInput style={styles.textInput} 
-                            placeholder="Enter Answer" multiline={true}
+                            placeholder="Enter Answer"
                             onChangeText={text => this.handleAnswerChange(text)} name="answer"/>
                         </View>
                         <View>
