@@ -50,8 +50,8 @@ class DeckListView extends Component {
   
     deleteDeck = (deckId, navigation) => {
         this.props.dispatch(deleteDeck(deckId))
-        deleteDeckFromAsync(deckId)
-        navigation.navigate('Decks')
+        .then(() => deleteDeckFromAsync(deckId))
+        .then(() => navigation.navigate('Decks'))
     }
 
     render() {
@@ -63,11 +63,11 @@ class DeckListView extends Component {
                                 return <Ionicons name={Platform.OS === 'ios' ? 'ios-arrow-round-back' : 'md-arrow-round-back'} 
                                 size={30} color={'black'} onPress={this.navigateToDeckView.bind(this, navigation)}/>
                             }}
-                            centerComponent={{text:`${deck.title}`, color: '#fff'}} 
+                            centerComponent={{text:`${deck && deck.title}`, color: '#fff'}} 
                             containerStyle={{backgroundColor: 'orange'}}/>
-                    <View style={styles.container}>
+                        {deck && <View style={styles.container}>
                         <View style={styles.row}>
-                            <Text style={styles.titleText}>{deck.title}</Text>
+                            <Text style={styles.titleText}>{deck && deck.title}</Text>
                             <Text style={styles.titleTextCards}>
                                 {deck.questions.length} 
                                 {deck.questions.length === 1 ? ' card': ' cards'}
@@ -84,7 +84,7 @@ class DeckListView extends Component {
                             <AddCardBtn onPress={this.navigateAddCard.bind(this, deck.title, navigation)} />
 
                         </View>
-                    </View>
+                    </View>}
                 </View>
                )
     }
