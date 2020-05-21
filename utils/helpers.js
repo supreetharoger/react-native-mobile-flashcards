@@ -14,7 +14,7 @@ export function clearLocalNotification () {
 function createNotification () {
     return {
         title: 'Log your stats!',
-        body: "👋 don't forget o complete a quiz today!",
+        body: "don't forget to complete a quiz today!",
         ios: {
             sound: true,
         },
@@ -28,15 +28,17 @@ function createNotification () {
 }
 
 export function setLocalNotification () {
-    clearLocalNotification()
+//To test localnotification by setting time for 30 seconds
+/*    clearLocalNotification()
     let sendAfterFiveSeconds = Date.now();
-        sendAfterFiveSeconds += 30000;
+        sendAfterFiveSeconds += 30000;*/
     AsyncStorage.getItem(NOTIFICATION_KEY)
         .then(JSON.parse)
         .then((data) => {
             if (data === null) {
                 Permissions.askAsync(Permissions.NOTIFICATIONS)
                     .then(({ status }) => {
+                        console.log("STATUS", status)
                           if (status === 'granted') {
                             Notifications.cancelAllScheduledNotificationsAsync()
 
@@ -48,13 +50,13 @@ export function setLocalNotification () {
                                 Notifications.scheduleLocalNotificationAsync(
                                         createNotification(),
                                         {
-                                            time: tomorrow,
-                                           // repeat: 'day',
+                                            time: tomorrow
                                         }
                                         )
-
                                 AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true))
                         }
+                    }, (reason) => {
+                        console.log("Rejection")
                     })
             }
         })
