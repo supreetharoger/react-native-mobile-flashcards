@@ -28,10 +28,6 @@ function createNotification () {
 }
 
 export function setLocalNotification () {
-//To test localnotification by setting time for 30 seconds
-/*    clearLocalNotification()
-    let sendAfterFiveSeconds = Date.now();
-        sendAfterFiveSeconds += 30000;*/
     AsyncStorage.getItem(NOTIFICATION_KEY)
         .then(JSON.parse)
         .then((data) => {
