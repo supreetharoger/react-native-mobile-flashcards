@@ -5,41 +5,15 @@ import { Header } from 'react-native-elements'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { clearLocalNotification, setLocalNotification } from '../utils/helpers'
 
-function CorrectBtn({onPress}) {
-    return (
+function SubmitBtn({onPress, color, text, textColor}) {
+        return (
             <TouchableOpacity onPress={onPress} 
-            style={[(Platform.OS === 'ios' ? styles.iosSubmitBtn : styles.androidSubmitBtn),{backgroundColor: 'green'}]}>
-                <Text style={styles.buttonText}>Correct</Text>
+            style={[(Platform.OS === 'ios' ? styles.iosSubmitBtn : styles.androidSubmitBtn),{backgroundColor: color}]}>
+                <Text style={[styles.buttonText, {color: textColor}]}>{text}</Text>
             </TouchableOpacity>
            )
 }
 
-function IncorrectBtn({onPress}) {
-    return (
-            <TouchableOpacity onPress={onPress} 
-            style={[(Platform.OS === 'ios' ? styles.iosSubmitBtn : styles.androidSubmitBtn),{backgroundColor: 'red'}]}>
-                <Text style={styles.buttonText}>Incorrect</Text>
-            </TouchableOpacity>
-           )
-}
-
-function AnswerBtn({onPress}) {
-    return (
-            <TouchableOpacity onPress={onPress} 
-            style={[(Platform.OS === 'ios' ? styles.iosSubmitBtn : styles.androidSubmitBtn), {backgroundColor: 'orange'}]}>
-                <Text style={styles.quizAnswer}> Show Answer</Text>
-            </TouchableOpacity>
-           )
-}
-
-function QuestionBtn({onPress}) {
-    return (
-            <TouchableOpacity onPress={onPress} 
-            style={[(Platform.OS === 'ios' ? styles.iosSubmitBtn : styles.androidSubmitBtn), {backgroundColor: 'orange'}]}>
-                <Text style={styles.quizAnswer}>Show Question</Text>
-            </TouchableOpacity>
-           )
-}
 
 class QuizView extends Component {
     state = {
@@ -105,19 +79,23 @@ class QuizView extends Component {
                        {!showAnswer &&
                         <View style={styles.row}>
                             <Text style={styles.quizQuestion}>{deck.questions[currentQuiz].question}</Text>
-                            <AnswerBtn onPress={this.showAnswer}/>
+                            <SubmitBtn onPress={this.showAnswer} color={'orange'} text={'Show Answer'} textColor={'black'}/>
                         </View>}
                         {showAnswer &&
                          <View style={styles.row}>
                                 <Text style={styles.quizQuestion}>{deck.questions[currentQuiz].answer}</Text>
-                                <QuestionBtn onPress={this.showQuestion} />
+                                <SubmitBtn onPress={this.showQuestion} color={'orange'} text={'Show Question'} textColor={'black'}/>
                             </View>}
                         {showAnswer &&
                         <View style={styles.bottom}>
-                            <IncorrectBtn onPress={totalQuiz === currentQuiz ? this.navigateToResults.bind(this, false, deck, navigation) :
-                                this.quizAnswer.bind(this,false, deck, navigation)}/>
-                            <CorrectBtn onPress = {totalQuiz === currentQuiz ? this.navigateToResults.bind(this, true, deck, navigation) :
-                                        this.quizAnswer.bind(this, true, deck, navigation)}/>
+                            <SubmitBtn onPress={totalQuiz === currentQuiz ? 
+                                this.navigateToResults.bind(this, false, deck, navigation)
+                                : this.quizAnswer.bind(this,false, deck, navigation)}
+                                color={'red'} text={'Incorrect'} textColor={'white'} />
+                            <SubmitBtn onPress = {totalQuiz === currentQuiz ? 
+                                this.navigateToResults.bind(this, true, deck, navigation)
+                                : this.quizAnswer.bind(this, true, deck, navigation)}
+                                color={'green'} text={'Correct'} textColor={'white'} />
                             <Text style={{textAlign: 'center', fontSize: 20}}>Did you get the answer?</Text>
 
                         </View>}
@@ -158,8 +136,7 @@ const styles = StyleSheet.create({
         margin: 30 
     },
     buttonText: {
-        padding: 20,
-        color: 'white',
+        padding: 10,
         fontSize: 30,
         textAlign: 'center'
     },
@@ -178,25 +155,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-end',
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    /*iosIncorrectBtn: { 
-        backgroundColor: 'red',
-        padding: 10,
-        borderRadius: 7,
-        height: 80,
-        margin: 20
-    },
-    androidIncorrectBtn: {
-        backgroundColor: 'red',
-        padding: 10,
-        paddingLeft: 30,
-        paddingRight: 30,
-        height: 45,
-        borderRadius: 2,
-        alignSelf: 'flex-end',
-        justifyContent: 'center',
-        alignItems: 'center'
-    }*/
+    }
 })
 
 function mapStateToProps({decks} , props) {

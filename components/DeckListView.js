@@ -31,13 +31,16 @@ class DeckListView extends Component {
     }
 
     navigateAddCard = (deck, navigation) => {
+        this.setState({
+            errorMessage: ''
+        })
         navigation.navigate('AddCards', { deckId: deck})
     }
 
     navigateStartQuiz = (deck, navigation) => {
         if(deck.questions.length === 0) {
             this.setState({
-                errorMessage: 'Add cards to start Quiz'
+                errorMessage: 'There are no cards in the deck'
             })
             return
         }
@@ -80,7 +83,7 @@ class DeckListView extends Component {
                             <TouchableOpacity onPress={this.deleteDeck.bind(this, deck.title, navigation)}>
                                 <Text style={styles.deleteText}>Delete Deck</Text>
                             </TouchableOpacity>
-                            {deck.questions.length !== 0 && <StartQuizBtn onPress={this.navigateStartQuiz.bind(this, deck, navigation)} />}
+                            <StartQuizBtn onPress={this.navigateStartQuiz.bind(this, deck, navigation)} />
                             <AddCardBtn onPress={this.navigateAddCard.bind(this, deck.title, navigation)} />
 
                         </View>

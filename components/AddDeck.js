@@ -53,7 +53,7 @@ class AddDeck extends Component {
         }
         this.props.dispatch(addDeck(deck))
         saveDeckTitle(this.state.title)
-        navigation.navigate('Decks')
+        navigation.navigate('DeckListView', {deckId: deck.title})
         this.setState({
             title: ''
         })
@@ -78,10 +78,10 @@ class AddDeck extends Component {
                             onChangeText={text => this.handleChange(text)}/>
 
                     </View>
-                    <View style={{flexDirection: 'column'}}>
+                    </TouchableOpacity>
+                    <View style={styles.errorMessage}>
                         <Text style={styles.errorMessageText}>{errorMessage}</Text>
                     </View>
-                    </TouchableOpacity>
                     
                     <View style={styles.bottom}>
                     <SubmitBtn onPress={this.submit.bind(this, decks, navigation)} />
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     },
     bottom: {
         flexDirection: 'column-reverse',
-        flex: 2,
+        flex: 1,
         margin: 30
         
     },
@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
-      margin: 40,
         color: 'black'
     },
     iosSubmitBtn: {
@@ -150,7 +149,9 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     errorMessage: {
-        flex: 1
+        flexDirection: 'row',
+        flex: 1,
+        margin: 30
     },
     errorMessageText: {
         textAlign: 'center',

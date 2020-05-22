@@ -36,7 +36,7 @@ class AddCards extends Component {
     }
     submit = (deckId, navigation) => {
         const { answer } = this.state
-        if((this.state.question === '' || this.state.question === undefined) || (answer === '' || answer === undefined)) {
+        if(!this.state.question || !this.state.answer) {
             this.setState({
                 errorMessage: 'Please enter question or answer'
             })
@@ -47,12 +47,13 @@ class AddCards extends Component {
            answer: this.state.answer
         } 
         this.props.dispatch(addDeckCards(deckId, question))
-        addCardToDeck(deckId, question)      
-        navigation.navigate('DeckListView', {deckId: deckId})  
+        addCardToDeck(deckId, question)     
         this.setState({
             question: '',
-            answer: ''
+            answer: '',
+            errorMessage: ''
         })
+        navigation.navigate('DeckListView', {deckId: deckId})  
     }
     navigateToDeckListView = (deck, navigation) => {
         navigation.navigate('DeckListView', { deckId: deck})
@@ -72,7 +73,7 @@ class AddCards extends Component {
                        <TouchableOpacity onPress={() => Keyboard.dismiss()}>
                          <View style={styles.row}>
                             <TextInput style={styles.textInput} 
-                            placeholder="Enter Question" multiline={true}
+                            placeholder="Enter Question"
                             onChangeText={text => this.handleQuestionChange(text)} name="question"/>
                         </View>  
                          <View style={styles.row}>
@@ -80,10 +81,10 @@ class AddCards extends Component {
                             placeholder="Enter Answer"
                             onChangeText={text => this.handleAnswerChange(text)} name="answer"/>
                         </View>
-                        <View>
-                            <Text style={styles.errorMessage}>{errorMessage}</Text>
-                        </View>
                         </TouchableOpacity>
+                        <View style={styles.errorMessage}>
+                            <Text style={styles.errorMessageText}>{errorMessage}</Text>
+                        </View>
                         <View style={styles.bottom}>
                             <SubmitBtn onPress={this.submit.bind(this, deck.title, navigation)} />
                         </View>
@@ -109,7 +110,7 @@ const styles = StyleSheet.create({
     },
     bottom: {
         flexDirection: 'column-reverse',
-        flex: 2,
+        flex: 1,
         margin: 30
         
     },
@@ -128,7 +129,6 @@ const styles = StyleSheet.create({
         height: 40,
         borderColor: 'gray',
         borderWidth: 1,
-      margin: 40,
         color: 'black'
     },
     iosSubmitBtn: {
@@ -151,6 +151,11 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     errorMessage: {
+        flexDirection: 'row',
+        flex: 1,
+        margin: 30
+    },
+    errorMessageText: {
         textAlign: 'center',
         fontSize: 20,
         color: 'red'
